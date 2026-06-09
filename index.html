@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StockPro — Inventory Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">S</div>
+      <span class="brand-name">StockPro</span>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item" data-page="products">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Products
+      </a>
+      <a href="#" class="nav-item" data-page="transactions">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Transactions
+      </a>
+      <a href="#" class="nav-item" data-page="reports">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Reports
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-badge">
+        <div class="user-avatar">T</div>
+        <div class="user-info">
+          <span class="user-name">Tadele</span>
+          <span class="user-role">Admin</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <h1 class="page-title" id="pageTitle">Dashboard</h1>
+      <div class="topbar-actions">
+        <button class="btn-primary" id="addProductBtn">+ Add Product</button>
+      </div>
+    </header>
+
+    <!-- Dashboard Page -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total Products</span>
+          <span class="stat-value" id="stat-total">0</span>
+        </div>
+        <div class="stat-card stat-green">
+          <span class="stat-label">In Stock</span>
+          <span class="stat-value" id="stat-instock">0</span>
+        </div>
+        <div class="stat-card stat-amber">
+          <span class="stat-label">Low Stock</span>
+          <span class="stat-value" id="stat-low">0</span>
+        </div>
+        <div class="stat-card stat-red">
+          <span class="stat-label">Out of Stock</span>
+          <span class="stat-value" id="stat-out">0</span>
+        </div>
+      </div>
+
+      <div class="section-header">
+        <h2 class="section-title">Low Stock Alerts</h2>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table" id="alertTable">
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Current Qty</th>
+              <th>Min Qty</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="alertBody"></tbody>
+        </table>
+        <p class="empty-state" id="noAlerts" style="display:none">✓ All products are sufficiently stocked.</p>
+      </div>
+
+      <div class="section-header" style="margin-top:2rem">
+        <h2 class="section-title">Recent Transactions</h2>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Product</th>
+              <th>Type</th>
+              <th>Qty</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody id="recentTxBody"></tbody>
+        </table>
+        <p class="empty-state" id="noRecentTx" style="display:none">No transactions yet.</p>
+      </div>
+    </div>
+
+    <!-- Products Page -->
+    <div class="page" id="page-products">
+      <div class="toolbar">
+        <input type="text" class="search-input" id="productSearch" placeholder="Search products..." />
+        <select class="filter-select" id="categoryFilter">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table" id="productTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>SKU</th>
+              <th>Qty</th>
+              <th>Min Qty</th>
+              <th>Unit Price</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productBody"></tbody>
+        </table>
+        <p class="empty-state" id="noProducts" style="display:none">No products found. Add your first product.</p>
+      </div>
+    </div>
+
+    <!-- Transactions Page -->
+    <div class="page" id="page-transactions">
+      <div class="toolbar">
+        <button class="btn-outline" id="addTxBtn">+ Record Transaction</button>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Product</th>
+              <th>Type</th>
+              <th>Qty</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody id="txBody"></tbody>
+        </table>
+        <p class="empty-state" id="noTx" style="display:none">No transactions recorded yet.</p>
+      </div>
+    </div>
+
+    <!-- Reports Page -->
+    <div class="page" id="page-reports">
+      <div class="report-grid">
+        <div class="report-card">
+          <h3>Inventory Value</h3>
+          <p class="report-big" id="rpt-value">ETB 0</p>
+          <p class="report-sub">Total stock value</p>
+        </div>
+        <div class="report-card">
+          <h3>Total Units</h3>
+          <p class="report-big" id="rpt-units">0</p>
+          <p class="report-sub">Across all products</p>
+        </div>
+        <div class="report-card">
+          <h3>Categories</h3>
+          <p class="report-big" id="rpt-cats">0</p>
+          <p class="report-sub">Unique categories</p>
+        </div>
+        <div class="report-card">
+          <h3>Transactions</h3>
+          <p class="report-big" id="rpt-tx">0</p>
+          <p class="report-sub">Total recorded</p>
+        </div>
+      </div>
+      <div class="section-header" style="margin-top:2rem">
+        <h2 class="section-title">Stock by Category</h2>
+      </div>
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead><tr><th>Category</th><th>Products</th><th>Total Qty</th><th>Value (ETB)</th></tr></thead>
+          <tbody id="catReportBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap">
+        <button class="btn-outline" id="exportCsvBtn">Export CSV</button>
+        <button class="btn-outline" id="printBtn">Print Report</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal: Add/Edit Product -->
+<div class="modal-backdrop" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle">Add Product</h2>
+      <button class="modal-close" id="closeProductModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editProductId" />
+      <div class="form-row">
+        <div class="form-group">
+          <label>Product Name *</label>
+          <input type="text" id="pName" placeholder="e.g. A4 Paper Ream" />
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <input type="text" id="pCategory" placeholder="e.g. Stationery" list="categoryList" />
+          <datalist id="categoryList"></datalist>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>SKU / Code</label>
+          <input type="text" id="pSku" placeholder="e.g. STA-001" />
+        </div>
+        <div class="form-group">
+          <label>Unit</label>
+          <input type="text" id="pUnit" placeholder="e.g. Pcs, Box, Kg" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Current Quantity *</label>
+          <input type="number" id="pQty" min="0" placeholder="0" />
+        </div>
+        <div class="form-group">
+          <label>Minimum Quantity (alert level)</label>
+          <input type="number" id="pMinQty" min="0" placeholder="5" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Unit Price (ETB)</label>
+          <input type="number" id="pPrice" min="0" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Supplier</label>
+          <input type="text" id="pSupplier" placeholder="Supplier name" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="pDesc" rows="2" placeholder="Optional notes..."></textarea>
+      </div>
+      <p class="form-error" id="productError"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="cancelProductModal">Cancel</button>
+      <button class="btn-primary" id="saveProductBtn">Save Product</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Transaction -->
+<div class="modal-backdrop" id="txModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Record Transaction</h2>
+      <button class="modal-close" id="closeTxModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Product *</label>
+        <select id="txProduct"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Type *</label>
+          <select id="txType">
+            <option value="in">Stock In (Receive)</option>
+            <option value="out">Stock Out (Issue)</option>
+            <option value="adjust">Adjustment</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Quantity *</label>
+          <input type="number" id="txQty" min="1" placeholder="0" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Note / Reference</label>
+        <input type="text" id="txNote" placeholder="e.g. PO-2025-001, Issued to HR dept." />
+      </div>
+      <p class="form-error" id="txError"></p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="cancelTxModal">Cancel</button>
+      <button class="btn-primary" id="saveTxBtn">Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Confirm Delete -->
+<div class="modal-backdrop" id="deleteModal">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <h2>Delete Product</h2>
+      <button class="modal-close" id="closeDeleteModal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Are you sure you want to delete <strong id="deleteProductName"></strong>? This action cannot be undone.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="cancelDeleteModal">Cancel</button>
+      <button class="btn-danger" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
